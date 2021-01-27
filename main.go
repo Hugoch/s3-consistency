@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -303,6 +304,11 @@ func cleanUp(client *s3.Client, bucket string) {
 func main() {
 	log.SetLevel(log.InfoLevel)
 
+	iterationsFlag := flag.Int("iterations", 5, "Number of iteration per thread per test.")
+	threadsFlag := flag.Int("threads", 5, "Number threads per test.")
+	chunkSizeFlag := flag.Int("chunk-size", 1, "Size in bytes of created files")
+	flag.Parse()
+
 	client := initializeS3Client()
 	bucketName := "s3-consistency"
 
@@ -319,9 +325,9 @@ func main() {
 		}
 	}
 
-	iterations := 100
-	threads := 70
-	chunkSize := 1
+	iterations := *iterationsFlag
+	threads := *threadsFlag
+	chunkSize := *chunkSizeFlag
 	fmt.Printf("--------------------------------- \033[1;33mSETUP\033[0m ---------------------------------\n\n")
 	fmt.Printf("Cleaning up repo...\n")
 	cleanUp(client, bucketName)
