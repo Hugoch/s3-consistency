@@ -33,7 +33,7 @@ func initializeS3Client(aEndpoint *string, aRegion *string) *s3.Client {
 	// Load the Shared AWS Configuration (~/.aws/config)
 	config, err := config.LoadDefaultConfig(context.TODO(), config.WithEndpointResolver(customResolver))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("\n%v", err)
 	}
 
 	client := s3.NewFromConfig(config, func(o *s3.Options) {
@@ -48,7 +48,7 @@ func createRandomFile(client *s3.Client, bucket string, chunkSize int, key *stri
 	if key == nil {
 		u, err := uuid.NewRandom()
 		if err != nil {
-			log.Fatal("Could not generate an UUID. Maybe lacking entropy?")
+			log.Fatal("\nCould not generate an UUID. Maybe lacking entropy?")
 		}
 		k := u.String()
 		key = &k
@@ -63,7 +63,7 @@ func createRandomFile(client *s3.Client, bucket string, chunkSize int, key *stri
 			Body:   r,
 		})
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("\n%v", err)
 	}
 	return *key
 }
@@ -83,14 +83,14 @@ func listAfterDelete(client *s3.Client, bucket string, iterations int, chunkSize
 			})
 		if err != nil {
 			log.Debug(err)
-			log.Fatalf("Could not DELETE object %s", key)
+			log.Fatalf("\nCould not DELETE object %s", key)
 		}
 		log.Debugf("LIST objects %s", key)
 		output, err := client.ListObjectsV2(context.TODO(),
 			&s3.ListObjectsV2Input{Bucket: &bucket})
 		if err != nil {
 			log.Debug(err)
-			log.Fatalf("Could not list bucket %s", bucket)
+			log.Fatalf("\nCould not list bucket %s", bucket)
 		}
 		found := false
 		for _, object := range output.Contents {
@@ -311,10 +311,11 @@ func main() {
 	endpointFlag := flag.String("endpoint", "https://s3.us-east-1.amazonaws.com", "S3 endpoint to use")
 	regionFlag := flag.String("region", "us-east-1", "S3 endpoint to use")
 	cleanFlag := flag.Bool("clean", false, "Clean bucket")
+	bucketFlag := flag.String("bucket", "s3-consistency", "Bucket to use for test (default 's3-consistency'")
 	flag.Parse()
 
 	client := initializeS3Client(endpointFlag, regionFlag)
-	bucketName := "s3-consistency"
+	bucketName := *bucketFlag
 
 	headOutput, err := client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
 		Bucket: &bucketName,
@@ -323,7 +324,7 @@ func main() {
 		if headOutput == nil {
 			_, err := client.CreateBucket(context.TODO(), &s3.CreateBucketInput{Bucket: &bucketName})
 			if err != nil {
-				log.Fatalf("Could not create bucket :: %v", err)
+				log.Fatalf("\nCould not create bucket :: %v", err)
 			}
 		}
 	}
