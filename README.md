@@ -2,6 +2,8 @@
 
 Test consistency of S3-compliant object stores.
 
+![](./screenshot.png)
+
 ## Object store eventual consistency
 
 Object store are usually distributed storage and focus on availability/performances rather than consistency (see CAP
