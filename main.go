@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"runtime"
 	"sync"
@@ -309,6 +310,7 @@ func main() {
 	chunkSizeFlag := flag.Int("chunk-size", 1, "Size in bytes of created files")
 	endpointFlag := flag.String("endpoint", "https://s3.us-east-1.amazonaws.com", "S3 endpoint to use")
 	regionFlag := flag.String("region", "us-east-1", "S3 endpoint to use")
+	cleanFlag := flag.Bool("clean", false, "Clean bucket")
 	flag.Parse()
 
 	client := initializeS3Client(endpointFlag, regionFlag)
@@ -330,8 +332,11 @@ func main() {
 	threads := *threadsFlag
 	chunkSize := *chunkSizeFlag
 	fmt.Printf("--------------------------------- \033[1;33mSETUP\033[0m ---------------------------------\n\n")
-	fmt.Printf("Cleaning up repo...\n")
-	cleanUp(client, bucketName)
+	if *cleanFlag {
+		fmt.Printf("Cleaning up repo...\n")
+		cleanUp(client, bucketName)
+		os.Exit(0)
+	}
 	fmt.Printf("--------------------------------- \033[1;32mRESULTS\033[0m ---------------------------------\n\n")
 	fmt.Printf("\033[1m%d\033[0m iterations per thread with \033[1m%d\033[0m thread(s)\n", iterations, threads)
 	fmt.Printf("\033[1m%d bytes\033[0m chunk\n", chunkSize)
