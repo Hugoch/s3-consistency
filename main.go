@@ -16,13 +16,13 @@ import (
 	"sync"
 )
 
-func initializeS3Client() *s3.Client {
+func initializeS3Client(aEndpoint *string, aRegion *string) *s3.Client {
 	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
-		if service == s3.ServiceID && region == "gra" {
+		if aEndpoint != nil || aRegion != nil {
 			return aws.Endpoint{
 				PartitionID:   "aws",
-				URL:           "https://s3.storage.gra.cloud.ovh.net",
-				SigningRegion: "gra",
+				URL:           *aEndpoint,
+				SigningRegion: *aRegion,
 			}, nil
 		}
 		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
@@ -307,9 +307,11 @@ func main() {
 	iterationsFlag := flag.Int("iterations", 5, "Number of iteration per thread per test.")
 	threadsFlag := flag.Int("threads", 5, "Number threads per test.")
 	chunkSizeFlag := flag.Int("chunk-size", 1, "Size in bytes of created files")
+	endpointFlag := flag.String("endpoint", "https://s3.us-east-1.amazonaws.com", "S3 endpoint to use")
+	regionFlag := flag.String("region", "us-east-1", "S3 endpoint to use")
 	flag.Parse()
 
-	client := initializeS3Client()
+	client := initializeS3Client(endpointFlag, regionFlag)
 	bucketName := "s3-consistency"
 
 	headOutput, err := client.HeadBucket(context.TODO(), &s3.HeadBucketInput{
@@ -319,8 +321,7 @@ func main() {
 		if headOutput == nil {
 			_, err := client.CreateBucket(context.TODO(), &s3.CreateBucketInput{Bucket: &bucketName})
 			if err != nil {
-				log.Debug(err)
-				log.Fatal("Could not create bucket")
+				log.Fatalf("Could not create bucket :: %v", err)
 			}
 		}
 	}
