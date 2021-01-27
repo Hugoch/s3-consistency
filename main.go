@@ -273,9 +273,9 @@ func runTest(client *s3.Client, bucket string, fn func(client *s3.Client, bucket
 
 	errPct := float32(errCount) / (float32(iterations) * float32(threads)) * 100.0
 	if errCount > 0 {
-		fmt.Printf("\n%30s  |     %6d    |  %6d    |   \033[31m%.4f\033[0m", getFunctionName(fn), iterations*threads, errCount, errPct)
+		fmt.Printf("%30s  |     %6d    |  %6d    |   \033[31m%.4f\033[0m\n", getFunctionName(fn), iterations*threads, errCount, errPct)
 	} else {
-		fmt.Printf("\n%30s  |     %6d    |  %6d    |   \033[32m%.4f\033[0m", getFunctionName(fn), iterations*threads, errCount, errPct)
+		fmt.Printf("%30s  |     %6d    |  %6d    |   \033[32m%.4f\033[0m\n", getFunctionName(fn), iterations*threads, errCount, errPct)
 	}
 	return errCount
 }
@@ -341,7 +341,7 @@ func main() {
 	fmt.Printf("--------------------------------- \033[1;32mRESULTS\033[0m ---------------------------------\n\n")
 	fmt.Printf("\033[1m%d\033[0m iterations per thread with \033[1m%d\033[0m thread(s)\n", iterations, threads)
 	fmt.Printf("\033[1m%d bytes\033[0m chunk\n", chunkSize)
-	fmt.Printf("%30s  | %10s    |  %6s    | %8s", "Test", "Iterations", "Errors", "% Errors")
+	fmt.Printf("%30s  | %10s    |  %6s    | %8s\n", "Test", "Iterations", "Errors", "% Errors")
 	runTest(client, bucketName, readAfterDelete, iterations, threads, chunkSize)
 	runTest(client, bucketName, readAfterCreate, iterations, threads, chunkSize)
 	runTest(client, bucketName, readAfterOverwrite, iterations, threads, chunkSize)
