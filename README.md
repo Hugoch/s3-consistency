@@ -29,17 +29,17 @@ Build the tool
 
 Run the tool
 ```bash
-./s3-consistency \
-  --endpoint https://s3.gra.storage.cloud.ovh.net \ 
-  --region gra \
-  --threads 70 \
-  --iterations 100 \
-  --bucket s3-consistency
+$ s3-consistency \
+      --endpoint https://s3.gra.storage.cloud.ovh.net \ 
+      --region gra \
+      --threads 70 \
+      --iterations 100 \
+      --bucket s3-consistency
 ```
 
 Available options
 ```bash
-./build/darwin-amd64/s3-consistency --help
+$ s3-consistency --help
 Usage of ./build/darwin-amd64/s3-consistency:
   -bucket string
         Bucket to use for test (default "s3-consistency")
