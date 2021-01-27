@@ -82,15 +82,13 @@ func listAfterDelete(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("\nCould not DELETE object %s", key)
+			log.Fatalf("\nCould not DELETE object %s :: %v", key,err)
 		}
 		log.Debugf("LIST objects %s", key)
 		output, err := client.ListObjectsV2(context.TODO(),
 			&s3.ListObjectsV2Input{Bucket: &bucket})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("\nCould not list bucket %s", bucket)
+			log.Fatalf("\nCould not list bucket %s :: %v", bucket, err)
 		}
 		found := false
 		for _, object := range output.Contents {
@@ -119,8 +117,7 @@ func listAfterCreate(client *s3.Client, bucket string, iterations int, chunkSize
 		output, err := client.ListObjectsV2(context.TODO(),
 			&s3.ListObjectsV2Input{Bucket: &bucket})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("Could not list bucket %s", bucket)
+			log.Fatalf("Could not list bucket %s :: %v", bucket, err)
 		}
 		found := false
 		for _, object := range output.Contents {
@@ -141,8 +138,7 @@ func listAfterCreate(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("Could not DELETE object %s", key)
+			log.Fatalf("Could not DELETE object %s :: %v", key, err)
 		}
 		total++
 	}
@@ -166,8 +162,7 @@ func readAfterOverwrite(client *s3.Client, bucket string, iterations int, chunkS
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("Could not GET object %s", key)
+			log.Fatalf("Could not GET object %s :: %v", key, err)
 		}
 		b, err := ioutil.ReadAll(obj.Body)
 		if len(b) != chunkSize+1 {
@@ -182,8 +177,7 @@ func readAfterOverwrite(client *s3.Client, bucket string, iterations int, chunkS
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatalf("Could not DELETE object %s", key)
+			log.Fatalf("Could not DELETE object %s :: %v", key, err)
 		}
 		total++
 	}
@@ -285,8 +279,7 @@ func cleanUp(client *s3.Client, bucket string) {
 	output, err := client.ListObjectsV2(context.TODO(),
 		&s3.ListObjectsV2Input{Bucket: &bucket})
 	if err != nil {
-		log.Debug(err)
-		log.Fatalf("Could not list bucket %s", bucket)
+		log.Fatalf("Could not list bucket %s :: %v", bucket, err)
 	}
 	for _, object := range output.Contents {
 		key := aws.ToString(object.Key)
