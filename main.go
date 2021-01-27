@@ -341,6 +341,6 @@ func main() {
 	runTest(client, bucketName, readAfterOverwrite, iterations, threads, chunkSize)
 	runTest(client, bucketName, listAfterCreate, iterations, threads, chunkSize)
 	runTest(client, bucketName, listAfterDelete, iterations, threads, chunkSize)
-	fmt.Printf("\n------------------------------")
+	fmt.Printf("\n------------------------------\n")
 
 }
