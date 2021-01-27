@@ -24,7 +24,7 @@ Tool runs the following consistency tests:
 
 Build the tool
 ```bash
-./go-build-all.sh
+$ ./go-build-all.sh
 ```
 
 Run the tool
