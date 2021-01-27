@@ -304,7 +304,7 @@ func main() {
 	endpointFlag := flag.String("endpoint", "https://s3.us-east-1.amazonaws.com", "S3 endpoint to use")
 	regionFlag := flag.String("region", "us-east-1", "S3 endpoint to use")
 	cleanFlag := flag.Bool("clean", false, "Clean bucket")
-	bucketFlag := flag.String("bucket", "s3-consistency", "Bucket to use for test (default 's3-consistency'")
+	bucketFlag := flag.String("bucket", "s3-consistency", "Bucket to use for test")
 	flag.Parse()
 
 	client := initializeS3Client(endpointFlag, regionFlag)
