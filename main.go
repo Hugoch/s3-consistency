@@ -206,8 +206,7 @@ func readAfterDelete(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatal("Could not DELETE object %s", key)
+			log.Fatal("Could not DELETE object %s :: %v", key, err)
 		}
 		log.Debugf("GET object %s", key)
 		_, err = client.GetObject(context.TODO(),
@@ -245,8 +244,7 @@ func readAfterCreate(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Debug(err)
-			log.Fatal("Could not DELETE object %s", key)
+			log.Fatal("Could not DELETE object %s :: %v", key,err)
 		}
 		total++
 	}
