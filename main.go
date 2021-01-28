@@ -17,7 +17,6 @@ import (
 	"reflect"
 	"runtime"
 	"sync"
-	"syscall"
 )
 
 func initializeS3Client(aEndpoint *string, aRegion *string) *s3.Client {
@@ -245,7 +244,7 @@ func readAfterCreate(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Fatalf("Could not DELETE object %s :: %v", key,err)
+			log.Fatalf("Could not DELETE object %s :: %v", key, err)
 		}
 		total++
 	}
@@ -306,16 +305,6 @@ func cleanUp(client *s3.Client, bucket string) {
 
 func main() {
 	log.SetLevel(log.InfoLevel)
-
-	// check ulimit values, and warn user in case of too low nofile limit
-	var noFileLimit syscall.Rlimit
-    err := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &noFileLimit)
-    if err != nil {
-        log.Errorf("Failed to check nofile ulimit :: %v", err)
-    }
-    if noFileLimit.Max < 10000{
-    	log.Warn("Test may fail due to too many open files errors. Increase your nofile ulimit.")
-	}
 
 	iterationsFlag := flag.Int("iterations", 5, "Number of iteration per thread per test.")
 	threadsFlag := flag.Int("threads", 5, "Number threads per test.")
