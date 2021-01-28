@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"reflect"
 	"runtime"
@@ -36,9 +38,17 @@ func initializeS3Client(aEndpoint *string, aRegion *string) *s3.Client {
 		log.Fatalf("\n%v", err)
 	}
 
+	// disable SSL cert checking. This is DANGEROUS, and only valid for custom endpoint benchmark. Never use in prod
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	httpClient := &http.Client{Transport: tr}
+
 	client := s3.NewFromConfig(config, func(o *s3.Options) {
 		o.UsePathStyle = true
 		o.UseAccelerate = false
+		o.HTTPClient = httpClient
 	})
 
 	return client
@@ -82,7 +92,7 @@ func listAfterDelete(client *s3.Client, bucket string, iterations int, chunkSize
 				Key:    &key,
 			})
 		if err != nil {
-			log.Fatalf("\nCould not DELETE object %s :: %v", key,err)
+			log.Fatalf("\nCould not DELETE object %s :: %v", key, err)
 		}
 		log.Debugf("LIST objects %s", key)
 		output, err := client.ListObjectsV2(context.TODO(),
